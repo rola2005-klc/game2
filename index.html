@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>星糖消消乐</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="panel">
+      <div>
+        <p class="eyebrow">Match-3 Mini Game</p>
+        <h1>星糖消消乐</h1>
+        <p class="hint">点击相邻方块交换，凑齐 3 个或以上同色即可消除。</p>
+      </div>
+      <div class="stats">
+        <div><span id="score">0</span><small>分数</small></div>
+        <div><span id="moves">30</span><small>步数</small></div>
+        <div><span id="best">0</span><small>最高</small></div>
+      </div>
+      <button id="newGame">重新开始</button>
+      <p id="message" class="message">先选一个方块吧 ✨</p>
+    </section>
+    <section class="board-wrap">
+      <div id="board" class="board" aria-label="消消乐棋盘"></div>
+    </section>
+  </main>
+  <script src="game.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
