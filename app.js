@@ -1,7 +1,7 @@
 const ROWS = 8;
 const COLS = 8;
 const COLORS = 6;
-const ICONS = ['','🍓','🍋','🫐','🍇','🥝','🍬'];
+const ICONS = ['', '🍓', '⭐️', '🫐', '🌸', '🥝', '🍬'];
 
 let board;
 let selected = null;
@@ -15,13 +15,25 @@ const movesEl = document.getElementById('moves');
 const bestEl = document.getElementById('best');
 const msgEl = document.getElementById('message');
 const newBtn = document.getElementById('newGame');
+const comboText = document.getElementById('comboText');
 
 function randomGem() {
   return makeRandomGem(COLORS);
 }
 
+function vibrate(pattern = 12) {
+  if (navigator.vibrate) navigator.vibrate(pattern);
+}
+
 function setMessage(text) {
   msgEl.textContent = text;
+}
+
+function showCombo(text) {
+  comboText.textContent = text;
+  comboText.classList.remove('show');
+  void comboText.offsetWidth;
+  comboText.classList.add('show');
 }
 
 function updateStats() {
@@ -43,7 +55,7 @@ function render(popCells = []) {
       cell.dataset.r = r;
       cell.dataset.c = c;
       cell.textContent = ICONS[board[r][c]];
-      cell.setAttribute('aria-label', `第${r+1}行第${c+1}列`);
+      cell.setAttribute('aria-label', `第${r+1}行第${c+1}列，${ICONS[board[r][c]]}`);
       if (selected && selected[0] === r && selected[1] === c) cell.classList.add('selected');
       if (pop.has(`${r},${c}`)) cell.classList.add('pop');
       cell.addEventListener('click', () => onCellClick(r, c));
@@ -55,11 +67,12 @@ function render(popCells = []) {
 
 function endIfNeeded() {
   if (moves <= 0) {
-    setMessage(`游戏结束！最终得分 ${score}。点“重新开始”再来一局。`);
+    setMessage(`结束啦！你拿到 ${score} 分，点 ↻ 再来一局。`);
+    showCombo('Game Over 💫');
     return true;
   }
   if (!hasPossibleMove(board)) {
-    setMessage('没有可消除的移动了，已自动洗牌。');
+    setMessage('没有能走的啦，自动换一盘糖果～');
     board = createBoard(ROWS, COLS, COLORS);
     render();
     return false;
@@ -69,23 +82,26 @@ function endIfNeeded() {
 
 function onCellClick(r, c) {
   if (busy || moves <= 0) return;
+  vibrate(8);
+
   if (!selected) {
     selected = [r, c];
-    setMessage('再点一个相邻方块进行交换。');
+    setMessage('再点旁边一个糖果交换～');
     render();
     return;
   }
+
   const a = selected;
   const b = [r, c];
   if (a[0] === b[0] && a[1] === b[1]) {
     selected = null;
-    setMessage('已取消选择。');
+    setMessage('取消选择啦');
     render();
     return;
   }
   if (!areAdjacent(a, b)) {
     selected = b;
-    setMessage('只能交换上下左右相邻的方块。');
+    setMessage('只能和上下左右相邻的糖果交换哦');
     render();
     return;
   }
@@ -95,7 +111,9 @@ function onCellClick(r, c) {
   const swapped = swapCells(board, a, b);
   const firstMatches = findMatches(swapped);
   if (firstMatches.length === 0) {
-    setMessage('这一步没有形成 3 连，换回来啦。');
+    setMessage('还没凑成 3 个，换回来啦');
+    showCombo('差一点!');
+    vibrate([20, 30, 20]);
     busy = false;
     render();
     return;
@@ -106,9 +124,13 @@ function onCellClick(r, c) {
   setTimeout(() => {
     const result = resolveBoard(board, randomGem);
     board = result.board;
-    score += result.removed * 10 + Math.max(0, result.chains - 1) * 25;
+    const gained = result.removed * 10 + Math.max(0, result.chains - 1) * 25;
+    score += gained;
     moves -= 1;
-    setMessage(`消除了 ${result.removed} 个！连锁 ${result.chains} 次。`);
+    const comboLabel = result.chains > 1 ? `${result.chains} 连击 +${gained}` : `+${gained}`;
+    showCombo(comboLabel);
+    vibrate(result.chains > 1 ? [18, 35, 18] : 18);
+    setMessage(`消掉 ${result.removed} 个糖果，继续冲！`);
     busy = false;
     render();
     endIfNeeded();
@@ -121,9 +143,13 @@ function startGame() {
   score = 0;
   moves = 30;
   busy = false;
-  setMessage('先选一个方块吧 ✨');
+  setMessage('点一下糖果，再点旁边的糖果交换 ✨');
+  showCombo('Ready?');
   render();
 }
 
-newBtn.addEventListener('click', startGame);
+newBtn.addEventListener('click', () => {
+  vibrate(10);
+  startGame();
+});
 startGame();

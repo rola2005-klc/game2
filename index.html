@@ -2,29 +2,39 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#fff4f8" />
   <title>星糖消消乐</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,500;9..40,700;9..40,900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="app">
-    <section class="panel">
-      <div>
-        <p class="eyebrow">Match-3 Mini Game</p>
-        <h1>星糖消消乐</h1>
-        <p class="hint">点击相邻方块交换，凑齐 3 个或以上同色即可消除。</p>
+  <main class="phone-shell">
+    <section class="top-card" aria-label="游戏信息">
+      <div class="title-row">
+        <div>
+          <p class="eyebrow">Cute Match-3</p>
+          <h1>星糖消消乐</h1>
+        </div>
+        <button id="newGame" class="restart" type="button" aria-label="重新开始">↻</button>
       </div>
       <div class="stats">
-        <div><span id="score">0</span><small>分数</small></div>
-        <div><span id="moves">30</span><small>步数</small></div>
-        <div><span id="best">0</span><small>最高</small></div>
+        <div class="stat"><strong id="score">0</strong><span>分数</span></div>
+        <div class="stat big"><strong id="moves">30</strong><span>步数</span></div>
+        <div class="stat"><strong id="best">0</strong><span>最高</span></div>
       </div>
-      <button id="newGame">重新开始</button>
-      <p id="message" class="message">先选一个方块吧 ✨</p>
+      <p id="message" class="message">点一下糖果，再点旁边的糖果交换 ✨</p>
     </section>
-    <section class="board-wrap">
+
+    <section class="board-card" aria-label="消消乐区域">
+      <div class="mascot" aria-hidden="true">☁️</div>
+      <div id="comboText" class="combo-text" aria-live="polite"></div>
       <div id="board" class="board" aria-label="消消乐棋盘"></div>
     </section>
+
+    <p class="tip">小提示：凑齐 3 个同款糖果就会自动消除 🍬</p>
   </main>
   <script src="game.js"></script>
   <script src="app.js"></script>
